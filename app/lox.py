@@ -15,3 +15,7 @@ class Interpreter :
 		tokens : list[Token] = scanner.scan_tokens()
 		for token in tokens :
 			print(token)
+
+		exit(65) if scanner.error else exit(0)
+
+

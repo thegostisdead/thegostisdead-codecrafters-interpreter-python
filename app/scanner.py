@@ -84,6 +84,7 @@ class Scanner:
 		self.start: int = 0
 		self.current: int = 0
 		self.line: int = 1
+		self.error = False
 
 	def advance(self) -> str:
 		char = self.source[self.current]
@@ -116,6 +117,7 @@ class Scanner:
 				self.line += 1
 			self.advance()
 		if self.is_at_end() :
+			self.error = True
 			print(f"[line {self.line}] Unterminated string.")
 			return
 		self.advance()
@@ -153,6 +155,7 @@ class Scanner:
 				return
 			else:
 				print(f"[line {self.line}] Error: Unexpected character: {c}")
+				self.error = True
 				return
 				#raise ValueError(self.line, "Unexpected character.")
 
