@@ -13,4 +13,6 @@ class Interpreter :
 	def run(self, source: str):
 		scanner = Scanner(source)
 		tokens : list[Token] = scanner.scan_tokens()
+		for token in tokens:
+			print(token)
 		exit(65) if scanner.error else exit(0)

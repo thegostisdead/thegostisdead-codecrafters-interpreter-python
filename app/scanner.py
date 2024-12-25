@@ -44,9 +44,7 @@ class TokenType(Enum):
 	TRUE = 'true'
 	VAR = 'var'
 	WHILE = 'while'
-
 	EOF = 'EOF'
-
 
 token_mapping_single_char = {
 			'(': TokenType.LEFT_PAREN,
@@ -61,7 +59,6 @@ token_mapping_single_char = {
 			'*': TokenType.STAR,
 }
 
-
 class Token:
 	def __init__(self, token_type: TokenType, lexeme: str, literal, line: int):
 		self.token_type = token_type
@@ -70,7 +67,6 @@ class Token:
 		self.line = line
 
 	def __str__(self):
-		# return f"<Token type={self.token_type} lexeme={self.lexeme} literal={self.literal} />"
 		return f"{self.token_type.name} {self.lexeme} {'null' if self.literal is None else self.literal}"
 
 
@@ -118,7 +114,7 @@ class Scanner:
 			self.advance()
 		if self.is_at_end() :
 			self.error = True
-			print(f"[line {self.line}] Unterminated string.")
+			print(f"[line {self.line}] Unterminated string.", file=sys.stderr)
 			return
 		self.advance()
 		value = str(self.source[self.start + 1: self.current - 1])
@@ -159,7 +155,6 @@ class Scanner:
 				self.error = True
 				return
 				#raise ValueError(self.line, "Unexpected character.")
-		print(resolved_type)
 		self.add_token(resolved_type)
 
 	def scan_tokens(self) -> list[Token]:
@@ -168,6 +163,5 @@ class Scanner:
 			self.scan_token()
 
 		token = Token(TokenType.EOF, "", None, self.line)
-		print(token, file=sys.stdout)
 		self.tokens.append(token)
 		return self.tokens
