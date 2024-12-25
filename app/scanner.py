@@ -98,6 +98,9 @@ class Scanner:
 	def is_at_end(self) -> bool:
 		return self.current >= len(self.source)
 
+	def peek(self) -> str:
+		return '\0' if self.is_at_end() else self.source[self.current]
+
 	def match(self, expected: str) -> bool:
 		if self.is_at_end() :
 			return False
@@ -120,6 +123,17 @@ class Scanner:
 				resolved_type = TokenType.LESS_EQUAL if self.match('=')  else TokenType.LESS
 			elif c == '>':
 				resolved_type = TokenType.GREATER_EQUAL if self.match('=') else TokenType.GREATER
+			elif c == '/' :
+				if self.match('/') :
+					# A comment goes until the end of the line.
+					while self.peek() != '\n' and not self.is_at_end() :
+						self.advance()
+			elif c in [' ', '\r', '\t'] :
+				# Ignore whitespace.
+				return
+			elif c == '\n' :
+				self.line += 1
+				return
 			else:
 				print(f"[line {self.line}] Error: Unexpected character: {c}")
 				return
