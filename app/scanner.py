@@ -133,7 +133,7 @@ class Scanner:
 			self.advance()
 		if self.is_at_end() :
 			self.error = True
-			print(f"[line {self.line}] Unterminated string.", file=sys.stderr)
+			print(f"[line {self.line}] Error: Unterminated string.", file=sys.stderr)
 			return
 		self.advance()
 		value = str(self.source[self.start + 1: self.current - 1])
