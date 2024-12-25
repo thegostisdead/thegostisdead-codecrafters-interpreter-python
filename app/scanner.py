@@ -1,6 +1,6 @@
-from typing import LiteralString, Any
+from typing import Any
 from enum import Enum
-
+import sys
 class TokenType(Enum):
 	LEFT_PAREN = '('
 	RIGHT_PAREN = ')'
@@ -154,7 +154,7 @@ class Scanner:
 				self.string()
 				return
 			else:
-				print(f"[line {self.line}] Error: Unexpected character: {c}")
+				print(f"[line {self.line}] Error: Unexpected character: {c}", file=sys.stderr)
 				self.error = True
 				return
 				#raise ValueError(self.line, "Unexpected character.")
