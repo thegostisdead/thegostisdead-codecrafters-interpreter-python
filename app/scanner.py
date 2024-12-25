@@ -71,7 +71,7 @@ class Token:
 
 	def __str__(self):
 		# return f"<Token type={self.token_type} lexeme={self.lexeme} literal={self.literal} />"
-		return f"{self.token_type.name} {self.lexeme} {self.literal}"
+		return f"{self.token_type.name} {self.lexeme} {'null' if self.literal is None else self.literal}"
 
 
 # https://craftinginterpreters.com/scanning.html#recognizing-lexemes
