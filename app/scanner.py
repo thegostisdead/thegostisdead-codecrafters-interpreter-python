@@ -165,6 +165,9 @@ class Scanner:
 		while not self.is_at_end():
 			self.start = self.current
 			self.scan_token()
+			exit(65) if self.error else exit(0)
 
-		self.tokens.append(Token(TokenType.EOF, "", None, self.line))
+		token = Token(TokenType.EOF, "", None, self.line)
+		print(token)
+		self.tokens.append(token)
 		return self.tokens
