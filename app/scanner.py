@@ -176,6 +176,7 @@ class Scanner:
 
 				if self.is_digit(c) :
 					self.number()
+					return
 				print(f"[line {self.line}] Error: Unexpected character: {c}", file=sys.stderr)
 				self.error = True
 				return
