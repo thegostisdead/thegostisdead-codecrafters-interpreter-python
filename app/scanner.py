@@ -126,6 +126,7 @@ class Scanner:
 
 	def scan_token(self):
 		c: str = self.advance()
+
 		resolved_type = token_mapping_single_char.get(c, None)
 
 		if resolved_type is None:
@@ -158,7 +159,7 @@ class Scanner:
 				self.error = True
 				return
 				#raise ValueError(self.line, "Unexpected character.")
-
+		print(resolved_type)
 		self.add_token(resolved_type)
 
 	def scan_tokens(self) -> list[Token]:
@@ -167,6 +168,6 @@ class Scanner:
 			self.scan_token()
 
 		token = Token(TokenType.EOF, "", None, self.line)
-		print(token)
+		print(token, file=sys.stdout)
 		self.tokens.append(token)
 		return self.tokens
