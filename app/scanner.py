@@ -59,6 +59,25 @@ token_mapping_single_char = {
 			'*': TokenType.STAR,
 }
 
+keywords: dict[str, TokenType] = {
+    "and": TokenType.AND,
+    "class": TokenType.CLASS,
+    "else": TokenType.ELSE,
+    "false": TokenType.FALSE,
+    "for": TokenType.FOR,
+    "fun": TokenType.FUN,
+    "if": TokenType.IF,
+    "nil": TokenType.NIL,
+    "or": TokenType.OR,
+    "print": TokenType.PRINT,
+    "return": TokenType.RETURN,
+    "super": TokenType.SUPER,
+    "this": TokenType.THIS,
+    "true": TokenType.TRUE,
+    "var": TokenType.VAR,
+    "while": TokenType.WHILE
+}
+
 class Token:
 	def __init__(self, token_type: TokenType, lexeme: str, literal, line: int):
 		self.token_type = token_type
@@ -126,6 +145,23 @@ class Scanner:
 		self.current += 1
 		return True
 
+	def is_alpha(self, char: str) -> bool:
+		if char == '_' :
+			return True
+		return char.isalpha()
+
+	def is_alphanum(self, char: str) -> bool:
+		return self.is_alpha(char) or self.is_digit(char)
+	def identifier(self):
+		while self.is_alphanum(self.peek()) :
+			self.advance()
+
+		text = self.source[self.start:self.current]
+		token_type = keywords.get(text)
+		if token_type is None:
+			token_type = TokenType.IDENTIFIER
+		self.add_token(token_type)
+
 	def string(self):
 		while self.peek() != '"' and not self.is_at_end():
 			if self.peek() == '\n' :
@@ -155,7 +191,6 @@ class Scanner:
 			elif c == '>':
 				resolved_type = TokenType.GREATER_EQUAL if self.match('=') else TokenType.GREATER
 			elif c == '/' :
-
 				if self.match('/') :
 					# A comment goes until the end of the line.
 					while self.peek() != '\n' and not self.is_at_end() :
@@ -163,6 +198,11 @@ class Scanner:
 				else :
 					self.add_token(TokenType.SLASH)
 				return
+
+			elif c == 'o' :
+				if self.match('r') :
+					self.add_token(TokenType.OR)
+
 			elif c in [' ', '\r', '\t'] :
 				# Ignore whitespace.
 				return
@@ -176,6 +216,9 @@ class Scanner:
 
 				if self.is_digit(c) :
 					self.number()
+					return
+				elif self.is_alpha(c) :
+					self.identifier()
 					return
 				print(f"[line {self.line}] Error: Unexpected character: {c}", file=sys.stderr)
 				self.error = True
