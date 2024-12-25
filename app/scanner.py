@@ -121,7 +121,9 @@ class Scanner:
 			elif c == '>':
 				resolved_type = TokenType.GREATER_EQUAL if self.match('=') else TokenType.GREATER
 			else:
-				raise ValueError(self.line, "Unexpected character.")
+				print(f"[line {self.line}] Error: Unexpected character: {c}")
+				return
+				#raise ValueError(self.line, "Unexpected character.")
 
 		self.add_token(resolved_type)
 
