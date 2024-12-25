@@ -91,12 +91,31 @@ class Scanner:
 		text = self.source[self.start:self.current]
 		self.tokens.append(Token(token_type, text, literal, self.line))
 
+	def is_digit(self, char: str):
+		return char.isdigit()
 
+	def peek_next(self):
+		if self.current + 1 >= len(self.source):
+			return '\0'
+		return self.source[self.current + 1]
+
+	def number(self):
+		while self.is_digit(self.peek()):
+			self.advance()
+
+		if self.peek() == '.' and self.is_digit(self.peek_next()):
+			self.advance()
+
+			while self.is_digit(self.peek()) :
+				self.advance()
+		self.add_token(TokenType.NUMBER, float(self.source[self.start: self.current]))
 	def is_at_end(self) -> bool:
 		return self.current >= len(self.source)
 
 	def peek(self) -> str:
-		return '\0' if self.is_at_end() else self.source[self.current]
+		if self.is_at_end() :
+			return '\0'
+		return self.source[self.current]
 
 	def match(self, expected: str) -> bool:
 		if self.is_at_end() :
@@ -136,10 +155,13 @@ class Scanner:
 			elif c == '>':
 				resolved_type = TokenType.GREATER_EQUAL if self.match('=') else TokenType.GREATER
 			elif c == '/' :
+
 				if self.match('/') :
 					# A comment goes until the end of the line.
 					while self.peek() != '\n' and not self.is_at_end() :
 						self.advance()
+				else :
+					self.add_token(TokenType.SLASH)
 				return
 			elif c in [' ', '\r', '\t'] :
 				# Ignore whitespace.
@@ -151,6 +173,9 @@ class Scanner:
 				self.string()
 				return
 			else:
+
+				if self.is_digit(c) :
+					self.number()
 				print(f"[line {self.line}] Error: Unexpected character: {c}", file=sys.stderr)
 				self.error = True
 				return
