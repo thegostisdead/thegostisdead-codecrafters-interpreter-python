@@ -109,6 +109,19 @@ class Scanner:
 
 		self.current += 1
 		return True
+
+	def string(self):
+		while self.peek() != '"' and not self.is_at_end():
+			if self.peek() == '\n' :
+				self.line += 1
+			self.advance()
+		if self.is_at_end() :
+			print(f"[line {self.line}] Unterminated string.")
+			return
+		self.advance()
+		value = str(self.source[self.start + 1: self.current - 1])
+		self.add_token(TokenType.STRING, value)
+
 	def scan_token(self):
 		c: str = self.advance()
 		resolved_type = token_mapping_single_char.get(c, None)
@@ -128,11 +141,15 @@ class Scanner:
 					# A comment goes until the end of the line.
 					while self.peek() != '\n' and not self.is_at_end() :
 						self.advance()
+				return
 			elif c in [' ', '\r', '\t'] :
 				# Ignore whitespace.
 				return
 			elif c == '\n' :
 				self.line += 1
+				return
+			elif c == '"':
+				self.string()
 				return
 			else:
 				print(f"[line {self.line}] Error: Unexpected character: {c}")
