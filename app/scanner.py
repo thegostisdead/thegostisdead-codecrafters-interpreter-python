@@ -79,7 +79,7 @@ class Scanner:
 			self.advance()
 		if self.is_at_end() :
 			from app.lox import Interpreter
-			Interpreter.report(self.line, "Unterminated", "string.")
+			Interpreter.report(self.line, "", "Unterminated string.")
 			#print(f"[line {self.line}] Error: Unterminated string.", file=sys.stderr)
 			return
 		self.advance()
