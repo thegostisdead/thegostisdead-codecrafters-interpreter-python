@@ -16,7 +16,7 @@ class Interpreter(Visitor):
         if a is None :
             return False
 
-        return a.equals(b);
+        return a == b
     def _evaluate(self, expr: Expr):
         return expr.accept(self)
 
@@ -50,7 +50,7 @@ class Interpreter(Visitor):
             return int(left) - int(right)
 
         if expr.operator.token_type == TokenType.PLUS :
-            if isinstance(left, int)  and isinstance(right, int) :
+            if isinstance(left, int) and isinstance(right, int) :
                 return int(left) + int(right)
             if isinstance(left, str) and isinstance(right, str) :
                 return str(left) + str(right)
