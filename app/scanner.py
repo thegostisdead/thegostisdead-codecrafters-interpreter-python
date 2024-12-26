@@ -80,7 +80,7 @@ class Scanner:
 			self.advance()
 		if self.is_at_end() :
 			from app.lox import Interpreter
-			Interpreter.report(self.line, "", "Unterminated string.")
+			Interpreter.report(self.line, "", "Unterminated string")
 			return
 		self.advance()
 		value = str(self.source[self.start + 1: self.current - 1])
