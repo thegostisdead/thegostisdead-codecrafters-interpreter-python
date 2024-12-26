@@ -135,7 +135,7 @@ class Scanner:
 					return
 
 				from app.lox import Interpreter
-				Interpreter.report(self.line, "Unexpected character", c)
+				Interpreter.report(self.line, "", "Unexpected character : " + c)
 				return
 		self.add_token(resolved_type)
 
