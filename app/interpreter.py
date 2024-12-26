@@ -54,9 +54,10 @@ class Interpreter(Visitor):
                 return int(left) + int(right)
             if isinstance(left, str) and isinstance(right, str) :
                 return str(left) + str(right)
-            if expr.operator.token_type ==TokenType.SLASH :
-                return int(left) / int(right)
             return
+        if expr.operator.token_type == TokenType.SLASH:
+            return int(left) / int(right)
+
         if expr.operator.token_type ==TokenType.STAR :
             return int(left) * int(right)
         # Unreachable
