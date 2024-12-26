@@ -10,12 +10,16 @@ def main():
     command = sys.argv[1]
     filename = sys.argv[2]
 
-    if command != "tokenize":
+    if command == "parse" :
+        pass
+
+    elif command == "tokenize":
+        interpreter = Interpreter()
+        interpreter.run_file(filename)
+
+    else :
         print(f"Unknown command: {command}", file=sys.stderr)
         exit(1)
-
-    interpreter = Interpreter()
-    interpreter.run_file(filename)
 
 
 
