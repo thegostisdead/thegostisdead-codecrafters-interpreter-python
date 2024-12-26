@@ -16,6 +16,9 @@ def main():
     elif command == "tokenize":
         Interpreter.run_file(filename, mode="tokenize")
 
+    elif command == "evaluate":
+        Interpreter.run_file(filename, mode="evaluate")
+
     else :
         print(f"Unknown command: {command}", file=sys.stderr)
         exit(1)

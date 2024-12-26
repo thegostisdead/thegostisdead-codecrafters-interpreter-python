@@ -34,6 +34,10 @@ class Interpreter :
 				if Interpreter.had_error:
 					return
 				print(AstPrinter().print(expression).lower())
+
+			if mode == "evaluate":
+				pass
+
 		except ParseError as pe :
 			Interpreter.error(pe.token, str(pe))
 
