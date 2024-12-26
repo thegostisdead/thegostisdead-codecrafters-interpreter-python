@@ -3,11 +3,11 @@ from app.tokens import TokenType
 from typing import Any
 
 class Interpreter(Visitor):
-    def _is_truthy(self, object: Any) -> bool:
-        if object is None :
+    def _is_truthy(self, obj: Any) -> bool:
+        if obj is None :
             return False
-        if isinstance(object, bool):
-            return bool(object)
+        if isinstance(obj, bool):
+            return bool(obj)
         return True
 
     def _is_equal(self, a : Any, b : Any):
@@ -75,3 +75,17 @@ class Interpreter(Visitor):
 
         # Unreachable
         return None
+
+    def _stringify(self, obj: Any):
+        if obj is None :
+            return "nil"
+        if isinstance(obj, int):
+            text = str(obj)
+            if text.endswith(".0") :
+                text = text[0:len(text) - 2]
+            return text
+        return str(obj)
+
+    def interpret(self, expr: Expr):
+        value = self._evaluate(expr)
+        print(self._stringify(value))

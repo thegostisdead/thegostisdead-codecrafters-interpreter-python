@@ -1,5 +1,5 @@
 import sys
-from app.lox import Interpreter
+from app.lox import Lox
 
 def main():
 
@@ -11,13 +11,13 @@ def main():
     filename = sys.argv[2]
 
     if command == "parse" :
-        Interpreter.run_file(filename, mode="parse")
+        Lox.run_file(filename, mode="parse")
 
     elif command == "tokenize":
-        Interpreter.run_file(filename, mode="tokenize")
+        Lox.run_file(filename, mode="tokenize")
 
     elif command == "evaluate":
-        Interpreter.run_file(filename, mode="evaluate")
+        Lox.run_file(filename, mode="evaluate")
 
     else :
         print(f"Unknown command: {command}", file=sys.stderr)

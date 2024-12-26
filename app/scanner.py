@@ -79,8 +79,8 @@ class Scanner:
 				self.line += 1
 			self.advance()
 		if self.is_at_end() :
-			from app.lox import Interpreter
-			Interpreter.report(self.line, "", "Unterminated string.")
+			from app.lox import Lox
+			Lox.report(self.line, "", "Unterminated string.")
 			return
 		self.advance()
 		value = str(self.source[self.start + 1: self.current - 1])
@@ -134,8 +134,8 @@ class Scanner:
 					self.identifier()
 					return
 
-				from app.lox import Interpreter
-				Interpreter.report(self.line, "", "Unexpected character: " + c)
+				from app.lox import Lox
+				Lox.report(self.line, "", "Unexpected character: " + c)
 				return
 		self.add_token(resolved_type)
 
