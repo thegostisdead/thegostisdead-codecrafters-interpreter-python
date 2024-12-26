@@ -202,6 +202,7 @@ class Scanner:
 			elif c == 'o' :
 				if self.match('r') :
 					self.add_token(TokenType.OR)
+				return
 
 			elif c in [' ', '\r', '\t'] :
 				# Ignore whitespace.
@@ -217,9 +218,11 @@ class Scanner:
 				if self.is_digit(c) :
 					self.number()
 					return
+
 				elif self.is_alpha(c) :
 					self.identifier()
 					return
+
 				print(f"[line {self.line}] Error: Unexpected character: {c}", file=sys.stderr)
 				self.error = True
 				return
