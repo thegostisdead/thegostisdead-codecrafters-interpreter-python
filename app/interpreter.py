@@ -87,6 +87,6 @@ class Interpreter(Visitor):
             return text
         return str(obj)
 
-    def floaterpret(self, expr: Expr):
+    def interpret(self, expr: Expr):
         value = self._evaluate(expr)
-        prfloat(self._stringify(value).lower())
+        print(self._stringify(value).lower())
