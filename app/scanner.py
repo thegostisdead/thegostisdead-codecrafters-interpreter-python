@@ -1,7 +1,5 @@
 from typing import Any
 from app.tokens import TokenType, Token, keywords, token_mapping_single_char
-import sys
-
 # https://craftinginterpreters.com/scanning.html#recognizing-lexemes
 
 class Scanner:
@@ -12,7 +10,6 @@ class Scanner:
 		self.start: int = 0
 		self.current: int = 0
 		self.line: int = 1
-		self.error = False
 
 	def advance(self) -> str:
 		char = self.source[self.current]
@@ -81,8 +78,9 @@ class Scanner:
 				self.line += 1
 			self.advance()
 		if self.is_at_end() :
-			self.error = True
-			print(f"[line {self.line}] Error: Unterminated string.", file=sys.stderr)
+			from app.lox import Interpreter
+			Interpreter.report(self.line, "Unterminated", "string")
+			#print(f"[line {self.line}] Error: Unterminated string.", file=sys.stderr)
 			return
 		self.advance()
 		value = str(self.source[self.start + 1: self.current - 1])
@@ -136,10 +134,9 @@ class Scanner:
 					self.identifier()
 					return
 
-				print(f"[line {self.line}] Error: Unexpected character: {c}", file=sys.stderr)
-				self.error = True
+				from app.lox import Interpreter
+				Interpreter.report(self.line, "Unexpected character", c)
 				return
-				#raise ValueError(self.line, "Unexpected character.")
 		self.add_token(resolved_type)
 
 	def scan_tokens(self) -> list[Token]:
