@@ -33,7 +33,7 @@ class Interpreter :
 				expression = parser.parse()
 				if Interpreter.had_error:
 					return
-				print(AstPrinter().print(expression))
+				print(AstPrinter().print(expression).lower())
 		except ParseError as pe :
 			Interpreter.error(pe.token, str(pe))
 
