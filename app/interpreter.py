@@ -89,4 +89,4 @@ class Interpreter(Visitor):
 
     def interpret(self, expr: Expr):
         value = self._evaluate(expr)
-        print(self._stringify(value))
+        print(self._stringify(value).lower())
