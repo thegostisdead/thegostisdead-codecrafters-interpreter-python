@@ -35,31 +35,31 @@ class Interpreter(Visitor):
             return self._is_equal(left, right)
 
         if expr.operator.token_type == TokenType.GREATER:
-            return int(left) > int(right)
+            return float(left) > float(right)
 
         if expr.operator.token_type == TokenType.GREATER_EQUAL:
-            return int(left) >=  int(right)
+            return float(left) >=  float(right)
 
         if expr.operator.token_type == TokenType.LESS:
-            return int(left) < int(right)
+            return float(left) < float(right)
 
         if expr.operator.token_type == TokenType.LESS_EQUAL:
-            return int(left) <= int(right)
+            return float(left) <= float(right)
 
         if expr.operator.token_type == TokenType.MINUS :
-            return int(left) - int(right)
+            return float(left) - float(right)
 
         if expr.operator.token_type == TokenType.PLUS :
-            if isinstance(left, int) and isinstance(right, int) :
-                return int(left) + int(right)
+            if isinstance(left, float) and isinstance(right, float) :
+                return float(left) + float(right)
             if isinstance(left, str) and isinstance(right, str) :
                 return str(left) + str(right)
             return
         if expr.operator.token_type == TokenType.SLASH:
-            return int(left) / int(right)
+            return float(left) / float(right)
 
         if expr.operator.token_type ==TokenType.STAR :
-            return int(left) * int(right)
+            return float(left) * float(right)
         # Unreachable
         return None
 
@@ -72,7 +72,7 @@ class Interpreter(Visitor):
         if expr.operator.token_type == TokenType.BANG:
             return not self._is_truthy(right)
         if expr.operator.token_type == TokenType.MINUS:
-            return - int(right)
+            return - float(right)
 
         # Unreachable
         return None
@@ -80,13 +80,13 @@ class Interpreter(Visitor):
     def _stringify(self, obj: Any):
         if obj is None :
             return "nil"
-        if isinstance(obj, int):
+        if isinstance(obj, float):
             text = str(obj)
             if text.endswith(".0") :
                 text = text[0:len(text) - 2]
             return text
         return str(obj)
 
-    def interpret(self, expr: Expr):
+    def floaterpret(self, expr: Expr):
         value = self._evaluate(expr)
-        print(self._stringify(value).lower())
+        prfloat(self._stringify(value).lower())
