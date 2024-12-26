@@ -52,7 +52,8 @@ class Interpreter :
 
 	@staticmethod
 	def report(line: int, where: str, message: str):
-		print("[line " + str(line) + "] Error " + where + ": " + message, file=sys.stderr)
+		#print("[line " + str(line) + "] Error " + where + ": " + message, file=sys.stderr)
+		print(f"[line {line}] Error: {message}.", file = sys.stderr)
 		Interpreter.had_error = True
 
 	@staticmethod
