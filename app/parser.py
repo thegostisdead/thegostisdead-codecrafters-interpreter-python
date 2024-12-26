@@ -1,13 +1,11 @@
 from app.tokens import Token, TokenType
 
 from app.expr import Expr, Grouping, Literal, Binary, Unary
-class ParseError(Exception) :
-    pass
+class ParseError(RuntimeError):
+    def __init__(self, token: Token, message: str) -> None:
+        super().__init__(message)
+        self.token = token
 
-def error(token: Token, message: str):
-    from app.lox import Interpreter
-    Interpreter.error(token, message)
-    return ParseError()
 
 class Parser :
     def __init__(self, tokens: list[Token]):
@@ -15,10 +13,12 @@ class Parser :
         self._current : int = 0
 
     def parse(self) -> Expr | None:
-        try :
-            return self._expression()
-        except ParseError as e :
-            return None
+        return self._expression()
+
+
+    @staticmethod
+    def error(token: Token, message: str):
+        return ParseError(token, message)
 
     def _peek(self) -> Token :
         return self._tokens[self._current]
@@ -40,7 +40,7 @@ class Parser :
     def _consume(self, token_type: TokenType, message: str):
         if self._check(token_type):
             return self._advance()
-        raise error(self._peek(), message)
+        raise self.error(self._peek(), message)
 
     def _primary(self) -> Expr:
         if self._match(TokenType.FALSE):
@@ -49,8 +49,6 @@ class Parser :
             return Literal(True)
         elif self._match(TokenType.NIL):
             return Literal(None)
-        else:
-            pass
 
         if self._match(TokenType.NUMBER, TokenType.STRING):
             return Literal(self._previous().literal)
@@ -60,7 +58,7 @@ class Parser :
             self._consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
             return Grouping(expr)
 
-        raise error(self._peek(), "Expect expression.")
+        raise self.error(self._peek(), "Expect expression.")
     def _unary(self) -> Expr:
         if self._match(TokenType.BANG, TokenType.MINUS) :
             operator = self._previous()
@@ -115,21 +113,14 @@ class Parser :
             if self._previous().token_type == TokenType.SEMICOLON:
                 return
 
-            match self._peek().token_type:
-                case TokenType.CLASS:
-                    return
-                case TokenType.FUN:
-                    return
-                case TokenType.VAR:
-                    return
-                case TokenType.FOR:
-                    return
-                case TokenType.IF:
-                    return
-                case TokenType.WHILE:
-                    return
-                case TokenType.PRINT:
-                    return
-                case TokenType.RETURN:
-                    return
+            if self._peek().token_type in (
+                    TokenType.CLASS,
+                    TokenType.VAR,
+                    TokenType.FOR,
+                    TokenType.IF,
+                    TokenType.WHILE,
+                    TokenType.PRINT,
+                    TokenType.RETURN,
+            ):
+                return
             self._advance()

@@ -11,15 +11,14 @@ def main():
     filename = sys.argv[2]
 
     if command == "parse" :
-        Interpreter.run_file(filename)
+        Interpreter.run_file(filename, mode="parse")
 
     elif command == "tokenize":
-        Interpreter.run_file(filename)
+        Interpreter.run_file(filename, mode="tokenize")
 
     else :
         print(f"Unknown command: {command}", file=sys.stderr)
         exit(1)
-
 
 
 if __name__ == "__main__":
