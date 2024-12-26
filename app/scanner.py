@@ -1,5 +1,6 @@
 from typing import Any
 from app.tokens import TokenType, Token, keywords, token_mapping_single_char
+import sys
 # https://craftinginterpreters.com/scanning.html#recognizing-lexemes
 
 class Scanner:
@@ -79,8 +80,8 @@ class Scanner:
 			self.advance()
 		if self.is_at_end() :
 			from app.lox import Interpreter
-			Interpreter.report(self.line, "", "Unterminated string.")
-			#print(f"[line {self.line}] Error: Unterminated string.", file=sys.stderr)
+			# Interpreter.report(self.line, "", "Unterminated string.")
+			print(f"[line {self.line}] Error: Unterminated string.", file=sys.stderr)
 			return
 		self.advance()
 		value = str(self.source[self.start + 1: self.current - 1])
