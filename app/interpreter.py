@@ -2,13 +2,12 @@ from app.expr import Visitor, Expr
 from app.tokens import TokenType, Token
 from app.exceptions import LoxRuntimeError
 from typing import Any
-import numbers
 
 class Interpreter(Visitor):
     def _is_truthy(self, obj: Any) -> bool:
         if obj is None :
             return False
-        if isinstance(obj, bool):
+        if type(obj) == type(True):
             return bool(obj)
         return True
 
@@ -23,11 +22,11 @@ class Interpreter(Visitor):
         return expr.accept(self)
 
     def _check_number_operand(self, operator: Token,  operand: Any):
-        if isinstance(operand, numbers.Real) : return
+        if isinstance(operand, float) : return
         raise LoxRuntimeError(operator, "Operand must be a number.")
 
     def _check_number_operands(self, operator: Token, left: Any, right: Any):
-        if  isinstance(left, numbers.Real) and isinstance(right, numbers.Real) : return
+        if  isinstance(left, float) and isinstance(right, float) : return
         raise LoxRuntimeError(operator, "Operands must be numbers.")
 
     def visit_literal_expr(self, expr: Expr):
@@ -69,7 +68,8 @@ class Interpreter(Visitor):
                 return float(left) + float(right)
             if isinstance(left, str) and isinstance(right, str) :
                 return str(left) + str(right)
-            return
+            raise LoxRuntimeError(expr.operator,"Operands must be two numbers or two strings.")
+
         if expr.operator.token_type == TokenType.SLASH:
             return float(left) / float(right)
 

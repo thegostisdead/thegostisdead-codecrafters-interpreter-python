@@ -45,6 +45,8 @@ class Lox :
 				tokens: list[Token] = scanner.scan_tokens()
 				parser = Parser(tokens)
 				expression = parser.parse()
+				if Lox.had_error:
+					return
 				Lox.interpreter.interpret(expression)
 
 
