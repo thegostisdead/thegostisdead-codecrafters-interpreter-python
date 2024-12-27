@@ -26,7 +26,7 @@ class Interpreter(Visitor):
         raise LoxRuntimeError(operator, "Operand must be a number.")
 
     def _check_number_operands(self, operator: Token, left: Any, right: Any):
-        if  self._is_number(left) and self._is_number(right) : return
+        if self._is_number(left) and self._is_number(right) : return
         raise LoxRuntimeError(operator, "Operands must be numbers.")
 
     def visit_literal_expr(self, expr: Expr):
@@ -100,15 +100,13 @@ class Interpreter(Visitor):
         return None
 
     def _stringify(self, obj: Any):
-        if isinstance(obj, str):
-            return obj
-
-        if obj is None :
-            return "null"
-
-        if isinstance(obj, bool):
-            return str(obj).lower()
-
+        if obj is None:
+            return "nil"
+        if isinstance(obj, float):
+            text = str(obj)
+            if text.endswith(".0"):
+                text = text[0:len(text) - 2]
+            return text
         return str(obj)
 
     def interpret(self, expr: Expr):
