@@ -4,8 +4,10 @@ from app.scanner import Scanner
 from app.parser import Parser, ParseError
 from app.ast import AstPrinter
 from app.interpreter import Interpreter
+from app.exceptions import LoxRuntimeError
 class Lox :
 	had_error = False
+	had_runtime_error = False
 	interpreter: Interpreter = Interpreter()
 
 	@staticmethod
@@ -18,6 +20,8 @@ class Lox :
 
 		if Lox.had_error :
 			exit(65)
+		if Lox.had_runtime_error :
+			exit(70)
 
 
 	@staticmethod
@@ -73,3 +77,8 @@ class Lox :
 			Lox.report(token.line, " at end", message)
 		else :
 			Lox.report(token.line, " at '" + token.lexeme + "'", message)
+
+	@staticmethod
+	def runtime_error(error: LoxRuntimeError):
+		print(str(error) +"\n[line " + str(error.token.line) + "]", file=sys.stderr)
+		Lox.had_runtime_error = True

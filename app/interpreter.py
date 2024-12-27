@@ -1,6 +1,8 @@
 from app.expr import Visitor, Expr
-from app.tokens import TokenType
+from app.tokens import TokenType, Token
+from app.exceptions import LoxRuntimeError
 from typing import Any
+import numbers
 
 class Interpreter(Visitor):
     def _is_truthy(self, obj: Any) -> bool:
@@ -20,6 +22,14 @@ class Interpreter(Visitor):
     def _evaluate(self, expr: Expr):
         return expr.accept(self)
 
+    def _check_number_operand(self, operator: Token,  operand: Any):
+        if isinstance(operand, numbers.Real) : return
+        raise LoxRuntimeError(operator, "Operand must be a number.")
+
+    def _check_number_operands(self, operator: Token, left: Any, right: Any):
+        if  isinstance(left, numbers.Real) and isinstance(right, numbers.Real) : return
+        raise LoxRuntimeError(operator, "Operands must be numbers.")
+
     def visit_literal_expr(self, expr: Expr):
         return expr.value
 
@@ -35,18 +45,23 @@ class Interpreter(Visitor):
             return self._is_equal(left, right)
 
         if expr.operator.token_type == TokenType.GREATER:
+            self._check_number_operands(expr.operator, left, right)
             return float(left) > float(right)
 
         if expr.operator.token_type == TokenType.GREATER_EQUAL:
+            self._check_number_operands(expr.operator, left, right)
             return float(left) >=  float(right)
 
         if expr.operator.token_type == TokenType.LESS:
+            self._check_number_operands(expr.operator, left, right)
             return float(left) < float(right)
 
         if expr.operator.token_type == TokenType.LESS_EQUAL:
+            self._check_number_operands(expr.operator, left, right)
             return float(left) <= float(right)
 
         if expr.operator.token_type == TokenType.MINUS :
+            self._check_number_operands(expr.operator, left, right)
             return float(left) - float(right)
 
         if expr.operator.token_type == TokenType.PLUS :
@@ -59,6 +74,7 @@ class Interpreter(Visitor):
             return float(left) / float(right)
 
         if expr.operator.token_type ==TokenType.STAR :
+            self._check_number_operands(expr.operator, left, right)
             return float(left) * float(right)
         # Unreachable
         return None
@@ -72,6 +88,7 @@ class Interpreter(Visitor):
         if expr.operator.token_type == TokenType.BANG:
             return not self._is_truthy(right)
         if expr.operator.token_type == TokenType.MINUS:
+            self._check_number_operand(expr.operator, right)
             return - float(right)
 
         # Unreachable
@@ -88,5 +105,9 @@ class Interpreter(Visitor):
         return str(obj)
 
     def interpret(self, expr: Expr):
-        value = self._evaluate(expr)
-        print(self._stringify(value).lower())
+        try :
+           value = self._evaluate(expr)
+           print(self._stringify(value).lower())
+        except LoxRuntimeError as re :
+            from app.lox import Lox
+            Lox.runtime_error(re)
