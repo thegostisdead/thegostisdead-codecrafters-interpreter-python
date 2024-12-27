@@ -74,14 +74,13 @@ class Interpreter(Visitor):
             raise LoxRuntimeError(expr.operator,"Operands must be two numbers or two strings.")
 
         if expr.operator.token_type == TokenType.SLASH:
-            if self._is_number(left) and self._is_number(right):
-                return left / right
-            raise LoxRuntimeError(expr.operator,"Operands must be numbers.")
+            self._check_number_operands(expr.operator, left, right)
+            return left / right
 
         if expr.operator.token_type == TokenType.STAR :
-            if self._check_number_operands(expr.operator, left, right):
-                return left * right
-            raise LoxRuntimeError(expr.operator, "Operands must be numbers.")
+            self._check_number_operands(expr.operator, left, right)
+            return left * right
+
 
         return None
 
