@@ -1,6 +1,8 @@
 from app.tokens import Token, TokenType
-from app.expr import ExprVisitor, Expr, Binary, Unary, Literal, Grouping
+from app.expr import ExprVisitor, Expr, Binary, Unary, Literal, Grouping, Variable
 class AstPrinter(ExprVisitor) :
+
+
 
   def print(self, expr: Expr) -> str :
     return expr.accept(self)
@@ -20,6 +22,9 @@ class AstPrinter(ExprVisitor) :
     if expr.value is None :
       return "nil"
     return str(expr.value)
+
+  def visit_variable_expr(self, expr: Variable):
+    return expr.name.lexeme
 
   def visit_unary_expr(self, expr: Unary):
     return self._parenthesize(expr.operator.lexeme, expr.right)

@@ -1,15 +1,19 @@
-from app.expr import ExprVisitor, Expr
+from app.expr import ExprVisitor, Expr, Variable
 from app.tokens import TokenType, Token
 from app.exceptions import LoxRuntimeError
-from app.stmt import Stmt, StmtVisitor, Expression, Print
+from app.stmt import Stmt, StmtVisitor, Expression, Print, Var
+from app.environment import Environment
 from typing import Any
 
 class Interpreter(ExprVisitor, StmtVisitor):
+    environment = Environment()
 
     def evaluate(self, expr: Expr):
         return expr.accept(self)
 
     def execute(self, stmt: Stmt):
+        if stmt is None :
+            exit(65)
         stmt.accept(self)
 
     def interpret(self, statements: list[Stmt]):
@@ -96,6 +100,16 @@ class Interpreter(ExprVisitor, StmtVisitor):
         value = self.evaluate(stmt.expression)
         print(self._stringify(value))
         return None
+
+    def visit_var_stmt(self, stmt: Var):
+        value = None
+        if stmt.initializer is not None :
+            value = self.evaluate(stmt.initializer)
+        self.environment.define(stmt.name.lexeme, value)
+        return None
+
+    def visit_variable_expr(self, expr: Variable):
+        return self.environment.get(expr.name)
 
     def visit_grouping_expr(self, expr: Expr):
         return self.evaluate(expr.expression)

@@ -1,7 +1,7 @@
 from app.tokens import Token, TokenType
 
-from app.expr import Expr, Grouping, Literal, Binary, Unary
-from app.stmt import Stmt, Print, Expression
+from app.expr import Expr, Grouping, Literal, Binary, Unary, Variable
+from app.stmt import Stmt, Print, Expression, Var
 from app.exceptions import ParseError, LoxRuntimeError
 
 class Parser :
@@ -12,7 +12,7 @@ class Parser :
     def parse(self) -> list[Stmt]:
         statements : list[Stmt] = []
         while not self._is_at_end() :
-            statements.append(self._statement())
+            statements.append(self._declaration())
         return statements
 
     def parse_expr(self) -> Expr:
@@ -60,6 +60,9 @@ class Parser :
         if self._match(TokenType.NUMBER, TokenType.STRING):
             return Literal(self._previous().literal)
 
+        if self._match(TokenType.IDENTIFIER) :
+            return Variable(self._previous())
+
         if self._match(TokenType.LEFT_PAREN) :
             expr = self._expression()
             self._consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
@@ -103,6 +106,24 @@ class Parser :
             right = self._comparison()
             expr = Binary(expr, operator, right)
         return expr
+
+    def _var_declaration(self) -> Stmt :
+        name = self._consume(TokenType.IDENTIFIER, "Expect variable name.")
+        initializer = None
+        if self._match(TokenType.EQUAL) :
+            initializer = self._expression()
+        self._consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
+        return Var(name, initializer)
+
+    def _declaration(self) -> Stmt | None:
+        try:
+            if self._match(TokenType.VAR) :
+                return self._var_declaration()
+
+            return self._statement()
+        except ParseError as pe:
+            self._synchronize()
+            return None
 
     def _expression(self) -> Expr:
         return self._equality()
