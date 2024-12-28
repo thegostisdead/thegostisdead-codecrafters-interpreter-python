@@ -42,13 +42,12 @@ class Lox :
 			if mode == "evaluate":
 				if Lox.had_error:
 					return
-				Lox.interpreter._evaluate(statements)
+				Lox.interpreter.evaluate(statements)
 
 			if mode == "run":
 				if Lox.had_error:
 					return
 				Lox.interpreter.interpret(statements)
-
 
 		except ParseError as pe :
 			Lox.error(pe.token, str(pe))

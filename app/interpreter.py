@@ -1,20 +1,20 @@
 from app.expr import ExprVisitor, Expr
 from app.tokens import TokenType, Token
 from app.exceptions import LoxRuntimeError
-from app.stmt import Stmt, StmtVisitor
+from app.stmt import Stmt, StmtVisitor, Expression, Print
 from typing import Any
 
 class Interpreter(ExprVisitor, StmtVisitor):
 
-    def _evaluate(self, expr: Expr):
+    def evaluate(self, expr: Expr):
         return expr.accept(self)
 
-    def _execute(self, stmt: Stmt):
+    def execute(self, stmt: Stmt):
         stmt.accept(self)
 
     def interpret(self, statements: list[Stmt]):
         for statement in statements:
-            self._execute(statement)
+            self.execute(statement)
     def _is_truthy(self, obj: Any) -> bool:
         return bool(obj)
 
@@ -37,8 +37,8 @@ class Interpreter(ExprVisitor, StmtVisitor):
         return expr.value
 
     def visit_binary_expr(self, expr: Expr):
-        left = self._evaluate(expr.left)
-        right = self._evaluate(expr.right)
+        left = self.evaluate(expr.left)
+        right = self.evaluate(expr.right)
 
 
         if expr.operator.token_type == TokenType.BANG_EQUAL:
@@ -88,20 +88,20 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
         return None
 
-    def visit_expression_stmt(self, stmt: 'Stmt'):
-        self._evaluate(stmt.expression)
+    def visit_expression_stmt(self, stmt: Expression):
+        self.evaluate(stmt.expression)
         return None
 
-    def visit_print_stmt(self, stmt: 'Stmt'):
-        value = self._evaluate(stmt.expression)
+    def visit_print_stmt(self, stmt: Print):
+        value = self.evaluate(stmt.expression)
         print(self._stringify(value))
         return None
 
     def visit_grouping_expr(self, expr: Expr):
-        return self._evaluate(expr.expression)
+        return self.evaluate(expr.expression)
 
     def visit_unary_expr(self, expr: Expr):
-        right = self._evaluate(expr.right)
+        right = self.evaluate(expr.right)
         if expr.operator.token_type == TokenType.BANG:
             return not self._is_truthy(right)
         if expr.operator.token_type == TokenType.MINUS:
