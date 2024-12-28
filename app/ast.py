@@ -24,6 +24,9 @@ class AstPrinter(ExprVisitor) :
   def visit_variable_expr(self, expr: Variable):
     return expr.name.lexeme
 
+  def visit_assign_expr(self, expr: Variable):
+    return self._parenthesize('=', expr.name.lexeme, expr.value)
+
   def visit_unary_expr(self, expr: Unary):
     return self._parenthesize(expr.operator.lexeme, expr.right)
 
