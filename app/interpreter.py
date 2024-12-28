@@ -32,7 +32,7 @@ class Interpreter(Visitor):
 
     def _visit_print_stmt(self, stmt: Print):
         value = self._evaluate(stmt.expression)
-        print(self._stringify(value))
+        print(self._stringify(value).lower())
         return None
 
     def _check_number_operand(self, operator: Token,  operand: Any):
