@@ -141,7 +141,7 @@ class Parser :
 
 
     def _expression(self) -> Expr:
-        return self._assignment()()
+        return self._assignment()
 
     def _print_statement(self):
         value = self._expression()
