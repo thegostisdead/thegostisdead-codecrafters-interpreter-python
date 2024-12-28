@@ -2,11 +2,7 @@ from app.tokens import Token, TokenType
 
 from app.expr import Expr, Grouping, Literal, Binary, Unary
 from app.stmt import Stmt, Print, Expression
-class ParseError(RuntimeError):
-    def __init__(self, token: Token, message: str) -> None:
-        super().__init__(message)
-        self.token = token
-
+from app.exceptions import ParseError
 
 class Parser :
     def __init__(self, tokens: list[Token]):

@@ -24,7 +24,7 @@ class Expression(Stmt):
         self.expression = expression
 
     def accept(self, visitor: StmtVisitor) -> None:
-        return visitor._visit_expression_stmt(self)
+        return visitor.visit_expression_stmt(self)
 
 
 class Print(Stmt):
@@ -32,4 +32,4 @@ class Print(Stmt):
         self.expression = expression
 
     def accept(self, visitor: StmtVisitor) -> None:
-        return visitor._visit_print_stmt(self)
+        return visitor.visit_print_stmt(self)

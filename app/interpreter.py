@@ -1,7 +1,7 @@
 from app.expr import ExprVisitor, Expr
 from app.tokens import TokenType, Token
 from app.exceptions import LoxRuntimeError
-from app.stmt import Expression, Print, Stmt, StmtVisitor
+from app.stmt import Stmt, StmtVisitor
 from typing import Any
 
 class Interpreter(ExprVisitor, StmtVisitor):
@@ -19,13 +19,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
         return bool(obj)
 
     def _is_equal(self, a : Any, b : Any):
-        if a is None and b is None:
-            return True
-        if a is None :
-            return False
-
         return a == b
-
     @staticmethod
     def _is_number(obj: Any) -> bool:
         return isinstance(obj, (int, float)) and not isinstance(obj, bool)
@@ -100,7 +94,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
     def visit_print_stmt(self, stmt: 'Stmt'):
         value = self._evaluate(stmt.expression)
-        print(self._stringify(value).lower())
+        print(self._stringify(value))
         return None
 
     def visit_grouping_expr(self, expr: Expr):
@@ -119,6 +113,10 @@ class Interpreter(ExprVisitor, StmtVisitor):
     def _stringify(self, obj: Any):
         if obj is None:
             return "nil"
+
+        if isinstance(obj, bool):
+            return str(obj).lower() # True -> true
+
         if isinstance(obj, float):
             text = str(obj)
             if text.endswith(".0"):

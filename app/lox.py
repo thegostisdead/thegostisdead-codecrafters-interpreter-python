@@ -26,39 +26,39 @@ class Lox :
 	def run(source: str, mode: str):
 		try :
 			scanner = Scanner(source)
+			tokens: list[Token] = scanner.scan_tokens()
+			parser = Parser(tokens)
+			statements = parser.parse()
+
 			if mode == "tokenize" :
-				tokens: list[Token] = scanner.scan_tokens()
 				for token in tokens:
 					print(token)
 
 			if mode == "parse" :
-				tokens: list[Token] = scanner.scan_tokens()
-				parser = Parser(tokens)
-				expression = parser.parse()
 				if Lox.had_error:
 					return
-				print(AstPrinter().print(expression).lower())
+				print(AstPrinter().print(statements).lower())
 
 			if mode == "evaluate":
-				tokens: list[Token] = scanner.scan_tokens()
-				parser = Parser(tokens)
-				expression = parser.parse()
 				if Lox.had_error:
 					return
-				Lox.interpreter.interpret(expression)
+				Lox.interpreter._evaluate(statements)
 
 			if mode == "run":
-				tokens: list[Token] = scanner.scan_tokens()
-				parser = Parser(tokens)
-				statements = parser.parse()
 				if Lox.had_error:
 					return
 				Lox.interpreter.interpret(statements)
 
+
+		except RuntimeError as re :
+			Lox.runtime_error(re)
+
+		except LoxRuntimeError as lre :
+			Lox.runtime_error(lre)
+
 		except ParseError as pe :
 			Lox.error(pe.token, str(pe))
-		except LoxRuntimeError as re :
-			Lox.runtime_error(re)
+
 
 
 	@staticmethod
@@ -72,6 +72,7 @@ class Lox :
 			except EOFError:
 				break
 		Lox.had_error = False
+		Lox.had_runtime_error = False
 
 	@staticmethod
 	def report(line: int, where: str, message: str):
