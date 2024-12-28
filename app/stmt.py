@@ -55,4 +55,4 @@ class Block(Stmt) :
         self.statements = statements
 
     def accept(self, visitor: StmtVisitor):
-        pass
+        return visitor.visit_block_stmt(self)

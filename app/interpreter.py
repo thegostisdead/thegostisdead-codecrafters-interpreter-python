@@ -1,7 +1,7 @@
 from app.expr import ExprVisitor, Expr, Variable
 from app.tokens import TokenType, Token
 from app.exceptions import LoxRuntimeError
-from app.stmt import Stmt, StmtVisitor, Expression, Print, Var
+from app.stmt import Stmt, StmtVisitor, Expression, Print, Var, Block
 from app.environment import Environment
 from typing import Any
 
@@ -110,6 +110,10 @@ class Interpreter(ExprVisitor, StmtVisitor):
         self.environment.define(stmt.name.lexeme, value)
         return None
 
+    def visit_block_stmt(self, stmt: Block):
+        self._execute_block(stmt.statements, Environment(self.environment.values))
+        return None
+
     def visit_variable_expr(self, expr: Variable):
         return self.environment.get(expr.name)
 
@@ -140,10 +144,6 @@ class Interpreter(ExprVisitor, StmtVisitor):
         finally:
            self.environment = previous
 
-
-    def visit_block_stmt(self, stmt: 'Stmt'):
-        self._execute_block(stmt.statements, Environment(self.environment.values))
-        return None
     def _stringify(self, obj: Any):
         if obj is None:
             return "nil"

@@ -1,1 +1,4 @@
-print;
+{
+    var quz = "world";
+    print quz;
+}
