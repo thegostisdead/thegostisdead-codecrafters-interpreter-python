@@ -2,7 +2,7 @@ from app.tokens import Token, TokenType
 
 from app.expr import Expr, Grouping, Literal, Binary, Unary
 from app.stmt import Stmt, Print, Expression
-from app.exceptions import ParseError
+from app.exceptions import ParseError, LoxRuntimeError
 
 class Parser :
     def __init__(self, tokens: list[Token]):
@@ -40,6 +40,11 @@ class Parser :
         if self._check(token_type):
             return self._advance()
         raise self.error(self._peek(), message)
+
+    def _consume_and_runtime_crash(self, token_type: TokenType, message: str):
+        if self._check(token_type):
+            return self._advance()
+        raise LoxRuntimeError(self._peek(), message)
 
     def _primary(self) -> Expr:
         if self._match(TokenType.FALSE):
@@ -101,12 +106,12 @@ class Parser :
 
     def _print_statement(self):
         value = self._expression()
-        self._consume(TokenType.SEMICOLON, "Expect ';' after value.")
+        self._consume_and_runtime_crash(TokenType.SEMICOLON, "Expect ';' after value.")
         return Print(value)
 
     def _expression_statement(self):
         expr = self._expression()
-        self._consume(TokenType.SEMICOLON, "Expect ';' after expression.")
+        self._consume_and_runtime_crash(TokenType.SEMICOLON, "Expect ';' after expression.")
         return Expression(expr)
     def _statement(self) -> Stmt:
         if self._match(TokenType.PRINT) : return self._print_statement()

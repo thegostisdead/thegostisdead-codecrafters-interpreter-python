@@ -24,12 +24,12 @@ class Lox :
 
 	@staticmethod
 	def run(source: str, mode: str):
-		try :
-			scanner = Scanner(source)
-			tokens: list[Token] = scanner.scan_tokens()
-			parser = Parser(tokens)
-			statements = parser.parse()
+		scanner = Scanner(source)
+		tokens: list[Token] = scanner.scan_tokens()
+		parser = Parser(tokens)
 
+		try :
+			statements = parser.parse()
 			if mode == "tokenize" :
 				for token in tokens:
 					print(token)
@@ -50,14 +50,12 @@ class Lox :
 				Lox.interpreter.interpret(statements)
 
 
-		except RuntimeError as re :
-			Lox.runtime_error(re)
-
-		except LoxRuntimeError as lre :
-			Lox.runtime_error(lre)
-
 		except ParseError as pe :
 			Lox.error(pe.token, str(pe))
+
+		except LoxRuntimeError as re :
+			Lox.runtime_error(re)
+
 
 
 
