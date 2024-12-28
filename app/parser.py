@@ -1,7 +1,7 @@
 from app.tokens import Token, TokenType
 
 from app.expr import Expr, Grouping, Literal, Binary, Unary, Variable, Assign
-from app.stmt import Stmt, Print, Expression, Var
+from app.stmt import Stmt, Print, Expression, Var, Block
 from app.exceptions import ParseError, LoxRuntimeError
 
 class Parser :
@@ -152,9 +152,20 @@ class Parser :
         expr = self._expression()
         self._consume(TokenType.SEMICOLON, "Expect ';' after expression.")
         return Expression(expr)
+
+    def _block(self) -> list[Stmt]:
+        statements = []
+        while not self._check(TokenType.RIGHT_BRACE) and not self._is_at_end() :
+            statements.append(self._declaration())
+
+        self._consume(TokenType.RIGHT_BRACE, "Expect '}' after block.")
+        return statements
+
     def _statement(self) -> Stmt:
         if self._match(TokenType.PRINT) :
             return self._print_statement()
+        if self._match(TokenType.LEFT_BRACE):
+            return Block(block())
         return self._expression_statement()
 
     def _match(self, *types : TokenType) -> bool:

@@ -7,6 +7,8 @@ from typing import Any
 
 class Interpreter(ExprVisitor, StmtVisitor):
 
+
+
     environment = Environment()
 
     def evaluate(self, expr: Expr):
@@ -128,6 +130,20 @@ class Interpreter(ExprVisitor, StmtVisitor):
         value = self.evaluate(expr.value)
         self.environment.assign(expr.name, value)
         return value
+
+    def _execute_block(self, statements: list[Stmt], environment: Environment):
+        previous = self.environment
+        try :
+            self.environment = environment
+            for statement in statements :
+                self.execute(statement)
+        finally:
+           self.environment = previous
+
+
+    def visit_block_stmt(self, stmt: 'Stmt'):
+        self._execute_block(stmt.statements, Environment(self.environment.values))
+        return None
     def _stringify(self, obj: Any):
         if obj is None:
             return "nil"

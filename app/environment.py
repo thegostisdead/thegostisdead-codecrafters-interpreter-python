@@ -3,8 +3,8 @@ from app.tokens import Token
 from app.exceptions import LoxRuntimeError
 class Environment:
 
-    def __init__(self):
-        self.values : dict[str, Any] = dict()
+    def __init__(self, environment : dict[str, Any] = dict()):
+        self.values : dict[str, Any] = environment
 
     def define(self, name: str, value: str):
         self.values[name] = value
