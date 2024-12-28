@@ -125,7 +125,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
         return None
 
     def visit_assign_expr(self, expr: 'Expr'):
-        value = self._evaluate(expr.value)
+        value = self.evaluate(expr.value)
         self.environment.assign(expr.name, value)
         return value
     def _stringify(self, obj: Any):
