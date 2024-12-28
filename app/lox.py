@@ -41,6 +41,14 @@ class Lox :
 					return
 				print(AstPrinter().print(expression).lower())
 
+			if mode == "evaluate":
+				tokens: list[Token] = scanner.scan_tokens()
+				parser = Parser(tokens)
+				expression = parser.parse()
+				if Lox.had_error:
+					return
+				Lox.interpreter.interpret(expression)
+
 			if mode == "run":
 				tokens: list[Token] = scanner.scan_tokens()
 				parser = Parser(tokens)

@@ -19,6 +19,9 @@ def main():
     elif command == "evaluate":
         Lox.run_file(filename, mode="evaluate")
 
+    elif command == "run":
+        Lox.run_file(filename, mode="run")
+
     else :
         print(f"Unknown command: {command}", file=sys.stderr)
         exit(1)
