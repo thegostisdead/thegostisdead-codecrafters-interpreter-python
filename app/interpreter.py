@@ -36,7 +36,6 @@ class Interpreter(ExprVisitor, StmtVisitor):
         if self._is_number(left) and self._is_number(right) : return
         raise LoxRuntimeError(operator, "Operands must be numbers.")
 
-
     def visit_literal_expr(self, expr: Expr):
         return expr.value
 

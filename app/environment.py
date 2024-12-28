@@ -1,5 +1,6 @@
 from typing import Any
 from app.tokens import Token
+from app.exceptions import LoxRuntimeError
 class Environment:
 
     def __init__(self):
@@ -11,4 +12,4 @@ class Environment:
     def get(self, name: Token):
         if name.lexeme in self.values:
             return self.values.get(name.lexeme)
-        raise RuntimeError(name, "Undefined variable '" + name.lexeme + "'.")
+        raise LoxRuntimeError(name, "Undefined variable '" + name.lexeme + "'.")
