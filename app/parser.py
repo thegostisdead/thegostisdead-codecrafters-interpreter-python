@@ -1,6 +1,6 @@
 from app.tokens import Token, TokenType
 
-from app.expr import Expr, Grouping, Literal, Binary, Unary, Variable
+from app.expr import Expr, Grouping, Literal, Binary, Unary, Variable, Assign
 from app.stmt import Stmt, Print, Expression, Var
 from app.exceptions import ParseError, LoxRuntimeError
 
@@ -125,8 +125,23 @@ class Parser :
             self._synchronize()
             return None
 
+    def _assignment(self) -> Expr:
+        expr = self._equality()
+        if self._match(TokenType.EQUAL) :
+            equals = self._previous()
+            value = self._assignment()
+
+            if isinstance(expr, Variable):
+                name = expr.name
+                return Assign(name, value)
+
+            self.error(equals, "Invalid assignment target.")
+
+        return expr
+
+
     def _expression(self) -> Expr:
-        return self._equality()
+        return self._assignment()()
 
     def _print_statement(self):
         value = self._expression()

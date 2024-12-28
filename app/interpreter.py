@@ -6,6 +6,7 @@ from app.environment import Environment
 from typing import Any
 
 class Interpreter(ExprVisitor, StmtVisitor):
+
     environment = Environment()
 
     def evaluate(self, expr: Expr):
@@ -123,6 +124,10 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
         return None
 
+    def visit_assign_expr(self, expr: 'Expr'):
+        value = self._evaluate(expr.value)
+        self.environment.assign(expr.name, value)
+        return value
     def _stringify(self, obj: Any):
         if obj is None:
             return "nil"
