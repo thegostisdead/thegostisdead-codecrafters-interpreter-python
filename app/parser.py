@@ -111,7 +111,7 @@ class Parser :
 
     def _expression_statement(self):
         expr = self._expression()
-        self._consume_and_runtime_crash(TokenType.SEMICOLON, "Expect ';' after expression.")
+        self._consume(TokenType.SEMICOLON, "Expect ';' after expression.")
         return Expression(expr)
     def _statement(self) -> Stmt:
         if self._match(TokenType.PRINT) : return self._print_statement()
