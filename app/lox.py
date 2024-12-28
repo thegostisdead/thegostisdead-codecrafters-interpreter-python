@@ -15,9 +15,7 @@ class Lox :
 		with open(filename, "rb") as file:
 			file_bytes = file.read()
 		raw_str = file_bytes.decode("utf-8")
-
 		Lox.run(raw_str, mode)
-
 		if Lox.had_error :
 			exit(65)
 		if Lox.had_runtime_error :
@@ -60,6 +58,8 @@ class Lox :
 
 		except ParseError as pe :
 			Lox.error(pe.token, str(pe))
+		except LoxRuntimeError as re :
+			Lox.runtime_error(re)
 
 
 	@staticmethod
@@ -76,7 +76,6 @@ class Lox :
 
 	@staticmethod
 	def report(line: int, where: str, message: str):
-		#print("[line " + str(line) + "] Error " + where + ": " + message, file=sys.stderr)
 		print(f"[line {line}] Error: {message}", file = sys.stderr)
 		Lox.had_error = True
 
