@@ -29,24 +29,27 @@ class Lox :
 		parser = Parser(tokens)
 
 		try :
-			statements = parser.parse()
 			if mode == "tokenize" :
 				for token in tokens:
 					print(token)
 
 			if mode == "parse" :
+				expressions = parser.parse_expr()
 				if Lox.had_error:
 					return
-				print(AstPrinter().print(statements).lower())
+				print(AstPrinter().print(expressions).lower())
 
 			if mode == "evaluate":
+				expressions = parser.parse_expr()
 				if Lox.had_error:
 					return
-				Lox.interpreter.evaluate(statements)
+				value = Lox.interpreter.evaluate(expressions)
+				print(Lox.interpreter._stringify(value).lower())
 
 			if mode == "run":
 				if Lox.had_error:
 					return
+				statements = parser.parse()
 				Lox.interpreter.interpret(statements)
 
 		except ParseError as pe :

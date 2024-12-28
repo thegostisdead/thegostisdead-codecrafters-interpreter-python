@@ -15,6 +15,9 @@ class Parser :
             statements.append(self._statement())
         return statements
 
+    def parse_expr(self) -> Expr:
+       return self._expression()
+
     @staticmethod
     def error(token: Token, message: str):
         return ParseError(token, message)
