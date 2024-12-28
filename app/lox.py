@@ -44,10 +44,10 @@ class Lox :
 			if mode == "evaluate":
 				tokens: list[Token] = scanner.scan_tokens()
 				parser = Parser(tokens)
-				expression = parser.parse()
+				statements = parser.parse()
 				if Lox.had_error:
 					return
-				Lox.interpreter.interpret(expression)
+				Lox.interpreter.interpret(statements)
 
 
 		except ParseError as pe :

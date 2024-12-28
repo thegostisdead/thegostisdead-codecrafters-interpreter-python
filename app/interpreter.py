@@ -1,6 +1,7 @@
 from app.expr import Visitor, Expr
 from app.tokens import TokenType, Token
 from app.exceptions import LoxRuntimeError
+from app.stmt import Expression, Print, Stmt
 from typing import Any
 
 class Interpreter(Visitor):
@@ -20,6 +21,19 @@ class Interpreter(Visitor):
         return isinstance(obj, (int, float)) and not isinstance(obj, bool)
     def _evaluate(self, expr: Expr):
         return expr.accept(self)
+
+
+    def _execute(self, stmt: Stmt):
+        stmt.accept(self)
+
+    def _visit_expression_stmt(self, stmt: Expression):
+        self._evaluate(stmt.expression)
+        return None
+
+    def _visit_print_stmt(self, stmt: Print):
+        value = self._evaluate(stmt.expression)
+        print(self._stringify(value))
+        return None
 
     def _check_number_operand(self, operator: Token,  operand: Any):
         if self._is_number(operand) : return
@@ -108,10 +122,10 @@ class Interpreter(Visitor):
             return text
         return str(obj)
 
-    def interpret(self, expr: Expr):
+    def interpret(self, statements: list[Stmt]):
         try :
-           value = self._evaluate(expr)
-           print(self._stringify(value).lower())
+            for statement in statements:
+                self._execute(statement)
         except LoxRuntimeError as re :
             from app.lox import Lox
             Lox.runtime_error(re)
