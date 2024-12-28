@@ -1,6 +1,6 @@
 from app.tokens import Token, TokenType
-from app.expr import Visitor, Expr, Binary, Unary, Literal, Grouping
-class AstPrinter(Visitor) :
+from app.expr import ExprVisitor, Expr, Binary, Unary, Literal, Grouping
+class AstPrinter(ExprVisitor) :
 
   def print(self, expr: Expr) -> str :
     return expr.accept(self)

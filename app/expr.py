@@ -1,7 +1,7 @@
 from abc import abstractmethod, ABC
 from typing import Any
 from app.tokens import Token
-class Visitor(ABC):
+class ExprVisitor(ABC):
     """Visitor interface for processing expressions."""
 
     @abstractmethod
@@ -24,7 +24,7 @@ class Expr(ABC):
     """Base class for all expression types."""
 
     @abstractmethod
-    def accept(self, visitor: Visitor):
+    def accept(self, visitor: ExprVisitor):
         """Abstract accept method to be implemented by subclasses."""
         pass
 
@@ -36,7 +36,7 @@ class Binary(Expr):
         self.operator = operator
         self.right = right
 
-    def accept(self, visitor: Visitor):
+    def accept(self, visitor: ExprVisitor):
         return visitor.visit_binary_expr(self)
 
 
@@ -44,7 +44,7 @@ class Grouping(Expr):
     def __init__(self, expression: Expr) -> None:
         self.expression = expression
 
-    def accept(self, visitor : Visitor):
+    def accept(self, visitor : ExprVisitor):
         return visitor.visit_grouping_expr(self)
 
 
@@ -52,7 +52,7 @@ class Literal(Expr):
     def __init__(self, value: Any) -> None :
         self.value = value
 
-    def accept(self, visitor: Visitor):
+    def accept(self, visitor: ExprVisitor):
         return visitor.visit_literal_expr(self)
 
 
@@ -61,5 +61,5 @@ class Unary(Expr):
         self.operator = operator
         self.right = right
 
-    def accept(self, visitor : Visitor):
+    def accept(self, visitor : ExprVisitor):
         return visitor.visit_unary_expr(self)

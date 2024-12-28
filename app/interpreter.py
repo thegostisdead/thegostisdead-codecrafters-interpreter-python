@@ -1,10 +1,20 @@
-from app.expr import Visitor, Expr
+from app.expr import ExprVisitor, Expr
 from app.tokens import TokenType, Token
 from app.exceptions import LoxRuntimeError
-from app.stmt import Expression, Print, Stmt
+from app.stmt import Expression, Print, Stmt, StmtVisitor
 from typing import Any
 
-class Interpreter(Visitor):
+class Interpreter(ExprVisitor, StmtVisitor):
+
+    def _evaluate(self, expr: Expr):
+        return expr.accept(self)
+
+    def _execute(self, stmt: Stmt):
+        stmt.accept(self)
+
+    def interpret(self, statements: list[Stmt]):
+        for statement in statements:
+            self._execute(statement)
     def _is_truthy(self, obj: Any) -> bool:
         return bool(obj)
 
@@ -19,21 +29,6 @@ class Interpreter(Visitor):
     @staticmethod
     def _is_number(obj: Any) -> bool:
         return isinstance(obj, (int, float)) and not isinstance(obj, bool)
-    def _evaluate(self, expr: Expr):
-        return expr.accept(self)
-
-
-    def _execute(self, stmt: Stmt):
-        stmt.accept(self)
-
-    def _visit_expression_stmt(self, stmt: Expression):
-        self._evaluate(stmt.expression)
-        return None
-
-    def _visit_print_stmt(self, stmt: Print):
-        value = self._evaluate(stmt.expression)
-        print(self._stringify(value).lower())
-        return None
 
     def _check_number_operand(self, operator: Token,  operand: Any):
         if self._is_number(operand) : return
@@ -42,6 +37,7 @@ class Interpreter(Visitor):
     def _check_number_operands(self, operator: Token, left: Any, right: Any):
         if self._is_number(left) and self._is_number(right) : return
         raise LoxRuntimeError(operator, "Operands must be numbers.")
+
 
     def visit_literal_expr(self, expr: Expr):
         return expr.value
@@ -98,6 +94,14 @@ class Interpreter(Visitor):
 
         return None
 
+    def visit_expression_stmt(self, stmt: 'Stmt'):
+        self._evaluate(stmt.expression)
+        return None
+
+    def visit_print_stmt(self, stmt: 'Stmt'):
+        value = self._evaluate(stmt.expression)
+        print(self._stringify(value).lower())
+        return None
 
     def visit_grouping_expr(self, expr: Expr):
         return self._evaluate(expr.expression)
@@ -122,10 +126,3 @@ class Interpreter(Visitor):
             return text
         return str(obj)
 
-    def interpret(self, statements: list[Stmt]):
-        try :
-            for statement in statements:
-                self._execute(statement)
-        except LoxRuntimeError as re :
-            from app.lox import Lox
-            Lox.runtime_error(re)

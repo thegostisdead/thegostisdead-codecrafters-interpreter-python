@@ -55,7 +55,6 @@ class Lox :
 					return
 				Lox.interpreter.interpret(statements)
 
-
 		except ParseError as pe :
 			Lox.error(pe.token, str(pe))
 		except LoxRuntimeError as re :
