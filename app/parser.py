@@ -165,7 +165,7 @@ class Parser :
         if self._match(TokenType.PRINT) :
             return self._print_statement()
         if self._match(TokenType.LEFT_BRACE):
-            return Block(block())
+            return Block(self._block())
         return self._expression_statement()
 
     def _match(self, *types : TokenType) -> bool:
