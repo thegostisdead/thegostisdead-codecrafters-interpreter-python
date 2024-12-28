@@ -111,7 +111,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
         return None
 
     def visit_block_stmt(self, stmt: Block):
-        self._execute_block(stmt.statements, Environment(self.environment.values))
+        self._execute_block(stmt.statements, Environment(enclosing=self.environment))
         return None
 
     def visit_variable_expr(self, expr: Variable):
