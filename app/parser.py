@@ -195,7 +195,7 @@ class Parser :
 
     def _while_statement(self) -> Stmt :
         self._consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.")
-        condition = self.expression()
+        condition = self._expression()
         self._consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.")
         body = self._statement()
         return While(condition, body)
