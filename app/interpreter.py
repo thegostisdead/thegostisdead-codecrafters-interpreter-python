@@ -22,7 +22,13 @@ class Interpreter(ExprVisitor, StmtVisitor):
         for statement in statements:
             self.execute(statement)
     def _is_truthy(self, obj: Any) -> bool:
-        return bool(obj)
+        if obj is None:
+            return False
+
+        if isinstance(obj, bool):
+            return value
+
+        return True
 
     def _is_equal(self, a : Any, b : Any):
         return a == b
