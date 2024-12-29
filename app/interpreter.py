@@ -1,11 +1,12 @@
 from app.expr import ExprVisitor, Expr, Variable
 from app.tokens import TokenType, Token
 from app.exceptions import LoxRuntimeError
-from app.stmt import Stmt, StmtVisitor, Expression, Print, Var, Block
+from app.stmt import Stmt, StmtVisitor, Expression, Print, Var, Block, If
 from app.environment import Environment
 from typing import Any
 
 class Interpreter(ExprVisitor, StmtVisitor):
+
 
 
 
@@ -134,6 +135,12 @@ class Interpreter(ExprVisitor, StmtVisitor):
         value = self.evaluate(expr.value)
         self.environment.assign(expr.name, value)
         return value
+
+    def visit_if_stmt(self, stmt: If):
+        if self._is_truthy(self.evaluate(stmt.condition)) :
+            self.execute(stmt.then_branch)
+        elif stmt.else_branch is not None :
+            self.execute(stmt.else_branch)
 
     def _execute_block(self, statements: list[Stmt], environment: Environment):
         previous = self.environment
