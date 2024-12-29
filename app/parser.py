@@ -2,7 +2,7 @@ from app.tokens import Token, TokenType
 
 from app.expr import Expr, Grouping, Literal, Binary, Unary, Variable, Assign, \
     Logical
-from app.stmt import Stmt, Print, Expression, Var, Block, If
+from app.stmt import Stmt, Print, Expression, Var, Block, If, While
 from app.exceptions import ParseError, LoxRuntimeError
 
 class Parser :
@@ -191,13 +191,29 @@ class Parser :
         if self._match(TokenType.ELSE) :
             else_branch = self._statement()
         return If(condition, then_branch, else_branch)
+
+
+    def _while_statement(self) -> Stmt :
+        self._consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.")
+        condition = self.expression()
+        self._consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.")
+        body = self._statement()
+        return While(condition, body)
+
+
     def _statement(self) -> Stmt:
         if self._match(TokenType.IF):
             return self._if_statement()
+
         if self._match(TokenType.PRINT) :
             return self._print_statement()
+
+        if  self._match(TokenType.WHILE) :
+            return self._while_statement()
+
         if self._match(TokenType.LEFT_BRACE):
             return Block(self._block())
+
         return self._expression_statement()
 
     def _match(self, *types : TokenType) -> bool:

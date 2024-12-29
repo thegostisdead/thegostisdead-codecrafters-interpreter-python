@@ -2,7 +2,8 @@ from typing import Any
 from app.tokens import TokenType, Token
 from app.exceptions import LoxRuntimeError
 from app.expr import ExprVisitor, Expr, Variable, Logical
-from app.stmt import Stmt, StmtVisitor, Expression, Print, Var, Block, If
+from app.stmt import Stmt, StmtVisitor, Expression, Print, Var, Block, If, \
+    While
 from app.environment import Environment
 
 
@@ -152,6 +153,12 @@ class Interpreter(ExprVisitor, StmtVisitor):
         value = self.evaluate(expr.value)
         self.environment.assign(expr.name, value)
         return value
+
+    def visit_while_stmt(self, stmt: While):
+        while self._is_truthy(self.evaluate(stmt.condition)):
+            self.execute(stmt.body)
+
+        return None
 
     def visit_if_stmt(self, stmt: If):
         if self._is_truthy(self.evaluate(stmt.condition)) :
