@@ -1,8 +1,1 @@
-{
-    var baz = "before";
-    {
-        var baz = "after";
-        print baz;
-    }
-    print baz;
-}
+ if ("" and "bar") print "bar";

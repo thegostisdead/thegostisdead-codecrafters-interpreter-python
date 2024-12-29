@@ -8,7 +8,6 @@ from app.environment import Environment
 
 class Interpreter(ExprVisitor, StmtVisitor):
 
-
     environment = Environment()
 
     def evaluate(self, expr: Expr):

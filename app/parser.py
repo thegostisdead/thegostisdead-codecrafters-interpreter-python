@@ -147,6 +147,7 @@ class Parser :
 
     def _assignment(self) -> Expr:
         expr = self._or()
+
         if self._match(TokenType.EQUAL) :
             equals = self._previous()
             value = self._assignment()
