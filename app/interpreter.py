@@ -26,7 +26,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
             return False
 
         if isinstance(obj, bool):
-            return value
+            return obj
 
         return True
 
