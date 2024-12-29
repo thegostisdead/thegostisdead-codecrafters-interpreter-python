@@ -1,13 +1,12 @@
-from app.expr import ExprVisitor, Expr, Variable
+from typing import Any
 from app.tokens import TokenType, Token
 from app.exceptions import LoxRuntimeError
+from app.expr import ExprVisitor, Expr, Variable, Logical
 from app.stmt import Stmt, StmtVisitor, Expression, Print, Var, Block, If
 from app.environment import Environment
-from typing import Any
+
 
 class Interpreter(ExprVisitor, StmtVisitor):
-
-
 
 
     environment = Environment()
@@ -103,6 +102,19 @@ class Interpreter(ExprVisitor, StmtVisitor):
         value = self.evaluate(stmt.expression)
         print(self._stringify(value))
         return None
+
+    def visit_logical_expr(self, expr: Logical):
+        left = self.evaluate(expr.left)
+
+        if expr.operator.token_type == TokenType.OR :
+            if self._is_truthy(left):
+                return left
+        else :
+            if not self._is_truthy(left):
+                return left
+
+        return self.evaluate(expr.right)
+
 
     def visit_var_stmt(self, stmt: Var):
         value = None

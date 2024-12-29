@@ -28,6 +28,10 @@ class ExprVisitor(ABC):
     def visit_assign_expr(self, expr: 'Expr'):
         pass
 
+    @abstractmethod
+    def visit_logical_expr(self, expr: 'Expr'):
+        pass
+
 class Expr(ABC):
     """Base class for all expression types."""
 
@@ -87,3 +91,13 @@ class Assign(Expr):
 
     def accept(self, visitor: ExprVisitor):
         return visitor.visit_assign_expr(self)
+
+class Logical(Expr):
+    def __init__(self, left: Expr, operator : Token, right : Expr):
+        self.left = left
+        self.operator = operator
+        self.right = right
+
+    def accept(self, visitor: ExprVisitor):
+        return visitor.visit_logical_expr(self)
+

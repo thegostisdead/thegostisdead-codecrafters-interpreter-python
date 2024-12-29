@@ -1,6 +1,7 @@
 from app.tokens import Token, TokenType
 
-from app.expr import Expr, Grouping, Literal, Binary, Unary, Variable, Assign
+from app.expr import Expr, Grouping, Literal, Binary, Unary, Variable, Assign, \
+    Logical
 from app.stmt import Stmt, Print, Expression, Var, Block, If
 from app.exceptions import ParseError, LoxRuntimeError
 
@@ -125,8 +126,27 @@ class Parser :
             self._synchronize()
             return None
 
-    def _assignment(self) -> Expr:
+    def _and(self) :
         expr = self._equality()
+        while self._match(TokenType.AND) :
+            operator = self._previous()
+            right = self._equality()
+            expr = Logical(expr, operator, right)
+        return expr
+
+    def _or(self) :
+        expr = self._and()
+
+        while self._match(TokenType.OR) :
+            operator = self._previous()
+            right = self._and()
+            expr = Logical(expr, operator, right)
+
+        return expr
+
+
+    def _assignment(self) -> Expr:
+        expr = self._or()
         if self._match(TokenType.EQUAL) :
             equals = self._previous()
             value = self._assignment()
