@@ -11,11 +11,11 @@ from app.functions import LoxFunction, Clock, LoxCallable
 
 class Interpreter(ExprVisitor, StmtVisitor):
 
-    globals = Environment()
-    environment = globals
 
     def __init__(self):
+        self.globals = Environment()
         self.globals.define("clock", Clock())
+        self.environment = self.globals
 
     def evaluate(self, expr: Expr):
         return expr.accept(self)

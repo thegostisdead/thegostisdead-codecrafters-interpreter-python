@@ -59,8 +59,6 @@ class Lox :
 			Lox.runtime_error(re)
 
 
-
-
 	@staticmethod
 	def run_prompt():
 		while True:
