@@ -1,18 +1,15 @@
-// This program creates a function that returns another function
-// and uses it to apply a function twice to a value
-fun makeAdder(x) {
-  fun add(y) {
-    return x + y;
-  }
-  return add;
-}
 
-fun applyTwice(f, x) {
-  return f(f(x));
-}
+ fun makeFilter(min) {
+   fun filter(n) {
+     if (n < min) {
+       return false;
+     }
+     return true;
+   }
+   return filter;
+ }
 
-var addx = makeAdder(6);
-var addy = makeAdder(6);
+ var greaterThanX = makeFilter(61);
 
-print applyTwice(addx, 6);
-print applyTwice(addy, 6);
+ print greaterThanX(5) ;
+

@@ -4,7 +4,7 @@ from app.exceptions import LoxRuntimeError
 
 class Environment:
     def __init__(self,
-                 enclosing: Optional[dict[str, Any]] = None
+                 enclosing: Optional['Environment'] = None
     ):
         self.enclosing = enclosing
         self.values : dict[str, Any] = dict()
@@ -13,11 +13,13 @@ class Environment:
         self.values[name] = value
 
     def get(self, name: Token):
+
         if name.lexeme in self.values:
             return self.values.get(name.lexeme)
 
         if self.enclosing is not None :
             return self.enclosing.get(name)
+
         raise LoxRuntimeError(name, "Undefined variable '" + name.lexeme + "'.")
 
     def assign(self, name: Token, value : Any):
