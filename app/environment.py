@@ -12,6 +12,9 @@ class Environment:
         self.values : dict[str, Any] = environment
 
     def define(self, name: str, value: Any):
+        # print(f"Defining variable: {name} with value: {value}")
+        if not isinstance(self.values, dict):
+            self.values = {}
         self.values[name] = value
 
     def get(self, name: Token):
