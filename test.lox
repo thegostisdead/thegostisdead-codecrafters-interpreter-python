@@ -1,1 +1,1 @@
- if ("" and "bar") print "bar";
+print clock() + 58;

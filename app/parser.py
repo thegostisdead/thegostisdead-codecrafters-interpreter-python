@@ -1,7 +1,7 @@
 from app.tokens import Token, TokenType
 
 from app.expr import Expr, Grouping, Literal, Binary, Unary, Variable, Assign, \
-    Logical
+    Logical, Call
 from app.stmt import Stmt, Print, Expression, Var, Block, If, While, Function, Return
 from app.exceptions import ParseError, LoxRuntimeError
 
@@ -53,8 +53,10 @@ class Parser :
     def _primary(self) -> Expr:
         if self._match(TokenType.FALSE):
             return Literal(False)
+
         elif self._match(TokenType.TRUE):
             return Literal(True)
+
         elif self._match(TokenType.NIL):
             return Literal(None)
 
@@ -70,12 +72,38 @@ class Parser :
             return Grouping(expr)
 
         raise self.error(self._peek(), "Expect expression.")
+
+
+    def _finish_call(self, callee: Expr) -> Expr :
+        arguments = []
+        if not self._check(TokenType.RIGHT_PAREN) :
+            while True:
+                if len(arguments) >= 255 :
+                    self.error(self._peek(), "Can't have more than 255 arguments.")
+
+                arguments.append(self._expression())
+
+                if self._match(TokenType.COMMA) :
+                    break
+        paren = self._consume(TokenType.RIGHT_PAREN,
+                        "Expect ')' after arguments.")
+        return Call(callee, paren, arguments)
+
+    def _call(self) -> Expr:
+        expr = self._primary()
+        while True:
+            if self._match(TokenType.LEFT_PAREN):
+                expr = self._finish_call(expr)
+            else:
+                break
+        return expr
+
     def _unary(self) -> Expr:
         if self._match(TokenType.BANG, TokenType.MINUS) :
             operator = self._previous()
             right = self._unary()
             return Unary(operator, right)
-        return self._primary()
+        return self._call()
 
     def _factor(self) -> Expr :
         expr = self._unary()

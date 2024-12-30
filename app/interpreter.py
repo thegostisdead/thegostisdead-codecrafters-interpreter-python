@@ -1,35 +1,16 @@
 from typing import Any
 from app.tokens import TokenType, Token
 from app.exceptions import LoxRuntimeError, ReturnException
-from app.expr import ExprVisitor, Expr, Variable, Logical
+from app.expr import ExprVisitor, Expr, Variable, Logical, Call
 from app.stmt import Stmt, StmtVisitor, Expression, Print, Var, Block, If, \
     While, Function, Return
 from app.environment import Environment
-from app.functions import LoxFunction
-import time
+from app.functions import LoxFunction, Clock, LoxCallable
 
-class LoxCallable:
-    def arity(self):
-        raise NotImplementedError
-
-    def call(self, interpreter, arguments):
-        raise NotImplementedError
-
-    def __str__(self):
-        return "<native fn>"
-
-class Clock(LoxCallable):
-    def arity(self):
-        return 0
-
-    def call(self, interpreter, arguments):
-        return time.time()
-
-    def __str__(self):
-        return "<native fn>"
 
 
 class Interpreter(ExprVisitor, StmtVisitor):
+
 
 
     globals = Environment()
@@ -167,6 +148,21 @@ class Interpreter(ExprVisitor, StmtVisitor):
             value = self.evaluate(stmt.initializer)
         self.environment.define(stmt.name.lexeme, value)
         return None
+
+    def visit_call_expr(self, expr: Call):
+        callee = self.evaluate(expr.callee)
+        arguments = []
+        for arg in expr.arguments :
+            arguments.append(self.evaluate(arg))
+
+        if not isinstance(callee, LoxCallable) :
+            raise LoxRuntimeError(expr.paren, "Can only call functions and classes.")
+
+        function = callee
+
+        if len(arguments) != function.arity() :
+            raise LoxRuntimeError(expr.paren, f"Expected {function.arity()} arguments but got {len(arguments)}.")
+        return function.call(self, arguments)
 
     def visit_block_stmt(self, stmt: Block):
         self._execute_block(stmt.statements, Environment(enclosing=self.environment))

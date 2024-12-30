@@ -1,9 +1,30 @@
 from typing import Any
 
 from app.exceptions import ReturnException
-from app.interpreter import LoxCallable, Interpreter
+
 from app.environment import Environment
 from app.stmt import Function
+import time
+
+class LoxCallable:
+    def arity(self):
+        raise NotImplementedError
+
+    def call(self, interpreter, arguments):
+        raise NotImplementedError
+
+    def __str__(self):
+        return "<native fn>"
+
+class Clock(LoxCallable):
+    def arity(self):
+        return 0
+
+    def call(self, interpreter, arguments):
+        return time.time()
+
+    def __str__(self):
+        return "<native fn>"
 
 
 class LoxFunction(LoxCallable) :
@@ -17,7 +38,7 @@ class LoxFunction(LoxCallable) :
     def arity(self) -> int :
         return len(self.declaration.params)
 
-    def call(self, interpreter: Interpreter, arguments : list[Any]):
+    def call(self, interpreter, arguments : list[Any]):
         environment = Environment(interpreter.globals)
         for i in range(0, len(self.declaration.params)) :
             environment.define(self.declaration.params[i].lexeme, arguments[i])
