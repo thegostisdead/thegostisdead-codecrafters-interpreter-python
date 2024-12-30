@@ -147,7 +147,6 @@ class Interpreter(ExprVisitor, StmtVisitor):
         if stmt.initializer is not None :
             value = self.evaluate(stmt.initializer)
 
-        print(f"[debug] = {stmt.name.lexeme}, value = {value}")
         self.environment.define(stmt.name.lexeme, value)
         return None
 
