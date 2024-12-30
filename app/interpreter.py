@@ -1,15 +1,42 @@
 from typing import Any
 from app.tokens import TokenType, Token
-from app.exceptions import LoxRuntimeError
+from app.exceptions import LoxRuntimeError, ReturnException
 from app.expr import ExprVisitor, Expr, Variable, Logical
 from app.stmt import Stmt, StmtVisitor, Expression, Print, Var, Block, If, \
-    While
+    While, Function, Return
 from app.environment import Environment
+from app.functions import LoxFunction
+import time
+
+class LoxCallable:
+    def arity(self):
+        raise NotImplementedError
+
+    def call(self, interpreter, arguments):
+        raise NotImplementedError
+
+    def __str__(self):
+        return "<native fn>"
+
+class Clock(LoxCallable):
+    def arity(self):
+        return 0
+
+    def call(self, interpreter, arguments):
+        return time.time()
+
+    def __str__(self):
+        return "<native fn>"
 
 
 class Interpreter(ExprVisitor, StmtVisitor):
 
-    environment = Environment()
+
+    globals = Environment()
+    environment = globals
+
+    def __init__(self):
+        self.globals.define("clock", Clock())
 
     def evaluate(self, expr: Expr):
         return expr.accept(self)
@@ -22,6 +49,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
     def interpret(self, statements: list[Stmt]):
         for statement in statements:
             self.execute(statement)
+
     def _is_truthy(self, obj: Any) -> bool:
         if obj is None:
             return False
@@ -33,6 +61,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
     def _is_equal(self, a : Any, b : Any):
         return a == b
+
     @staticmethod
     def _is_number(obj: Any) -> bool:
         return isinstance(obj, (int, float)) and not isinstance(obj, bool)
@@ -47,6 +76,11 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
     def visit_literal_expr(self, expr: Expr):
         return expr.value
+
+    def visit_function_stmt(self, stmt: Function):
+        func = LoxFunction(stmt)
+        self.environment.define(stmt.name.lexeme, func)
+        return None
 
     def visit_binary_expr(self, expr: Expr):
         left = self.evaluate(expr.left)
@@ -97,7 +131,6 @@ class Interpreter(ExprVisitor, StmtVisitor):
             self._check_number_operands(expr.operator, left, right)
             return left * right
 
-
         return None
 
     def visit_expression_stmt(self, stmt: Expression):
@@ -121,6 +154,12 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
         return self.evaluate(expr.right)
 
+    def visit_return_stmt(self, stmt: Return):
+        value = None
+        if stmt.value is not None :
+            value = self.evaluate(stmt.value)
+
+        raise ReturnException(value)
 
     def visit_var_stmt(self, stmt: Var):
         value = None

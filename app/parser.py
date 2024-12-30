@@ -2,7 +2,7 @@ from app.tokens import Token, TokenType
 
 from app.expr import Expr, Grouping, Literal, Binary, Unary, Variable, Assign, \
     Logical
-from app.stmt import Stmt, Print, Expression, Var, Block, If, While
+from app.stmt import Stmt, Print, Expression, Var, Block, If, While, Function, Return
 from app.exceptions import ParseError, LoxRuntimeError
 
 class Parser :
@@ -116,8 +116,29 @@ class Parser :
         self._consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
         return Var(name, initializer)
 
+    def _function(self, kind: str) -> Function:
+        name = self._consume(TokenType.IDENTIFIER, "Expect " + kind + " name.")
+        self._consume(TokenType.LEFT_PAREN, "Expect '(' after " + kind + " name.")
+        parameters = []
+        if not self._check(TokenType.RIGHT_PAREN) :
+            while True:
+                if len(parameters) >= 255:
+                    self.error(self._peek(), "Can't have more than 255 parameters.")
+                parameters.append(self._consume(TokenType.IDENTIFIER, "Expect parameter name."))
+
+                if not self._match(TokenType.COMMA):
+                    break
+        self._consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.")
+
+        self._consume(TokenType.LEFT_BRACE, "Expect '{' before " + kind + " body.")
+        body = self._block()
+        return Function(name, parameters, body)
+
     def _declaration(self) -> Stmt | None:
         try:
+
+            if self._match(TokenType.FUN):
+                return self._function("function")
             if self._match(TokenType.VAR) :
                 return self._var_declaration()
 
@@ -192,6 +213,13 @@ class Parser :
             else_branch = self._statement()
         return If(condition, then_branch, else_branch)
 
+    def _return_statement(self) -> Stmt:
+        keyword = self._previous()
+        value = None
+        if not self._check(TokenType.SEMICOLON) :
+            value = self._expression()
+        self._consume(TokenType.SEMICOLON, "Expect ';' after return value.")
+        return Return(keyword, value)
 
     def _while_statement(self) -> Stmt :
         self._consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.")
@@ -245,6 +273,9 @@ class Parser :
 
         if self._match(TokenType.IF):
             return self._if_statement()
+
+        if self._match(TokenType.RETURN):
+            return self._return_statement()
 
         if self._match(TokenType.PRINT) :
             return self._print_statement()

@@ -28,6 +28,15 @@ class StmtVisitor(ABC):
     def visit_while_stmt(self, expr: 'Stmt'):
         pass
 
+    @abstractmethod
+    def visit_function_stmt(self, expr: 'Stmt'):
+        pass
+
+    @abstractmethod
+    def visit_return_stmt(self, expr: 'Stmt'):
+        pass
+
+
 class Stmt(ABC):
     @abstractmethod
     def accept(self, visitor: StmtVisitor):
@@ -57,6 +66,12 @@ class Var(Stmt):
     def accept(self, visitor: StmtVisitor) -> None:
         return visitor.visit_var_stmt(self)
 
+class Return(Stmt):
+    def __init__(self, keyword: Token, value: Expr):
+        self.keyword = keyword
+        self.value = value
+    def accept(self, visitor: StmtVisitor):
+        return visitor.visit_return_stmt(self)
 
 class While(Stmt):
 
@@ -84,3 +99,12 @@ class If(Stmt) :
 
     def accept(self, visitor: StmtVisitor):
         return visitor.visit_if_stmt(self)
+
+class Function(Stmt):
+    def __init__(self, name: Token, params: list[Token], body: list[Stmt]) -> None :
+        self.name = name
+        self.params = params
+        self.body = body
+
+    def accept(self, visitor: StmtVisitor):
+        return visitor.visit_function_stmt(self)

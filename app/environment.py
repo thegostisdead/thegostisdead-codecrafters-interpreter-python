@@ -11,7 +11,7 @@ class Environment:
             self.enclosing : Environment = enclosing
         self.values : dict[str, Any] = environment
 
-    def define(self, name: str, value: str):
+    def define(self, name: str, value: Any):
         self.values[name] = value
 
     def get(self, name: Token):
