@@ -70,6 +70,7 @@ class Return(Stmt):
     def __init__(self, keyword: Token, value: Expr):
         self.keyword = keyword
         self.value = value
+
     def accept(self, visitor: StmtVisitor):
         return visitor.visit_return_stmt(self)
 

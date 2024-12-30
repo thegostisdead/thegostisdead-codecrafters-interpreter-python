@@ -11,8 +11,6 @@ from app.functions import LoxFunction, Clock, LoxCallable
 
 class Interpreter(ExprVisitor, StmtVisitor):
 
-
-
     globals = Environment()
     environment = globals
 

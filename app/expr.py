@@ -1,6 +1,7 @@
 from abc import abstractmethod, ABC
 from typing import Any
 from app.tokens import Token
+
 class ExprVisitor(ABC):
     """Visitor interface for processing expressions."""
 
